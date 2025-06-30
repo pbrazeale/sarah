@@ -1,0 +1,7 @@
+# Line Editing Guidelines and Exmaple:
+LINE_EDITING_GUIDELINES 
+LINE_EDITING_EXAMPLE
+
+# Developmental Editing Guidelines and Example:
+DEVELOPMENTAL_EDITING_GUIDELINES
+DEVELOPMENTAL_EDITING_EXAMPLE
