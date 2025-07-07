@@ -56,14 +56,16 @@ def call_openrouter(objective_selection, manuscript_path, parameters, beat_sheet
   timestamp = datetime.datetime.now().strftime("%Y%m%d_%H%M%S")
   
   if objective_selection == 0:
-    objective_prefix = "Beat_Sheet_"
+        objective_prefix = "Beat_Sheet_"
   elif objective_selection == 1:
-    objective_prefix = "MS_Dev_Edit_"
+      objective_prefix = "MS_Dev_Edit_"
+  elif objective_selection == 2:
+      objective_prefix = "Chapter_Dev_Edit_"
   else:
-    objective_prefix = f"Objective_{objective_selection}_"
+      objective_prefix = f"Objective_{objective_selection}_"
 
-  base_name = os.path.basename(manuscript_path) # Gets 'MyNovel.md'
-  file_name_only, _ = os.path.splitext(base_name) # Gets 'MyNovel'
+  base_name = os.path.basename(manuscript_path) 
+  file_name_only, _ = os.path.splitext(base_name) 
   
   filename = f"{objective_prefix}{file_name_only}_{timestamp}.md"
   filepath = os.path.join(output_dir, filename)
