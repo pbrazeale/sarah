@@ -194,7 +194,7 @@ def main():
                     )
 
                     # Ask for confirmation before deleting the source file
-                    confirm_delete = input('Happy with the generated report? "Yes" to delete the original chapter file from markdown/, "No" to keep it.\nOption: ').lower()
+                confirm_delete = input('Happy with the generated report? "Yes" to delete the original chapter file from markdown/, "No" to keep it.\nOption: ').lower()
                     if confirm_delete == 'yes':
                         try:
                             os.remove(chapter_path)
