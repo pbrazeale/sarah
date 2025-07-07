@@ -11,8 +11,13 @@ def main():
     
     process_chapter()
 
-    # operation_request = input("What ")
-    # call_openrouter()
+    create_developmental_edit = False
+    while create_developmental_edit == False:
+        beat_sheet_request = input('Would you like to create a developmental edit report? "Yes", "No"\nOption: ')
+        beat_sheet_request.lower()
+        if beat_sheet_request == "yes":
+            create_developmental_edit = True
+            call_openrouter(0)
 
 
 if __name__ == "__main__":
