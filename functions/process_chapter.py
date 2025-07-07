@@ -54,5 +54,35 @@ def process_chapter():
 
             print(f"Processed {filename} -> {manuscript_md_filename}")
 
+            split_into_chapters(markdown_text, base_name, markdown_dir)
+
+            
     for filename in files:
         os.remove(os.path.join(import_dir, filename))
+
+def split_into_chapters(markdown_text, manuscript_title, output_dir):
+    chapters = []
+    current_chapter = []
+    lines = markdown_text.split('\n')
+
+    for line in lines:
+        if line.startswith('# '):
+            # New chapter heading detected
+            if current_chapter:
+                chapters.append(current_chapter)
+            current_chapter = [line]
+        else:
+            current_chapter.append(line)
+
+    if current_chapter:
+        chapters.append(current_chapter)
+
+    # Write each chapter to its own .md file
+    for idx, chapter_lines in enumerate(chapters, start=1):
+        chapter_filename = f"Chapter {idx} {manuscript_title}.md"
+        chapter_path = os.path.join(output_dir, chapter_filename)
+
+        with open(chapter_path, 'w', encoding='utf-8') as f:
+            f.write('\n'.join(chapter_lines))
+
+        print(f"Created {chapter_filename}")
