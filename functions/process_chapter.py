@@ -83,15 +83,24 @@ def split_into_chapters(markdown_text, manuscript_title, output_dir, title_text)
             # New chapter heading detected
             if current_chapter:
                 chapters.append(current_chapter)
+
+            # Start a new chapter with the current heading
             current_chapter = [line]
         else:
-            current_chapter.append(line)
+            # Only add content to current_chapter if a chapter has been started
+            if current_chapter:
+                current_chapter.append(line)
 
+    # Add the last chapter if it has content
     if current_chapter:
         chapters.append(current_chapter)
 
     # Write each chapter to its own .md file
     for idx, chapter_lines in enumerate(chapters, start=1):
+        # Skip creating files for empty chapters
+        if not any(line.strip() for line in chapter_lines):
+            continue
+
         chapter_filename = f"Chapter {idx} {manuscript_title}.md"
         chapter_path = os.path.join(output_dir, chapter_filename)
 
