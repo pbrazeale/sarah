@@ -188,7 +188,7 @@ def main():
 
                 if process_this_chapter == 'yes':
                     # Call run_with_spinner for each chapter
-                     run_with_spinner(
+                    run_with_spinner(
                         f'Creating Developmental Edit for {clean_name}',
                         call_openrouter,
                         2, # CORRECTED: Use objective 2 for chapter-level developmental edits
