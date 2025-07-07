@@ -7,7 +7,7 @@ def main():
     # Initial processing from .docx -> .md for cleaner LLM interface
     chapter_processing = False
     while not chapter_processing:
-        chapter_processing_request = input('Have you palced your manuscript in ./working_dir/import? "Yes", "No"\nOption: ')
+        chapter_processing_request = input('Have you placed your manuscript in ./working_dir/import? "Yes", "No"\nOption: ')
         chapter_processing_request = chapter_processing_request.lower()
         if chapter_processing_request == "yes":
             chapter_processing = True
