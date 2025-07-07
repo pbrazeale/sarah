@@ -1,6 +1,3 @@
-import os
-from docx import Document
-
 def process_chapter():
     import_dir = './working_dir/import'
     markdown_dir = './working_dir/markdown'
@@ -11,7 +8,7 @@ def process_chapter():
     files = os.listdir(import_dir)
     if not files:
         print("No manuscript found in ./working_dir/import")
-        return
+        return None, []
 
     for filename in files:
         filepath = os.path.join(import_dir, filename)
@@ -56,17 +53,21 @@ def process_chapter():
 
             print(f"Processed {filename} -> {manuscript_md_filename}")
 
-            split_into_chapters(markdown_text, base_name, markdown_dir, title_text)
+            # Split into chapters and capture returned chapter file paths
+            chapter_files = split_into_chapters(markdown_text, base_name, markdown_dir, title_text)
 
     # Clear import directory after processing
     for filename in files:
         os.remove(os.path.join(import_dir, filename))
+
+    return manuscript_md_path, chapter_files
 
 
 def split_into_chapters(markdown_text, manuscript_title, output_dir, title_text):
     chapters = []
     current_chapter = []
     lines = markdown_text.split('\n')
+    created_chapter_files = []
 
     title_skipped = False
 
@@ -74,28 +75,23 @@ def split_into_chapters(markdown_text, manuscript_title, output_dir, title_text)
         if line.startswith('# '):
             heading_text = line[2:].strip()
 
-            # Check if this heading matches the title_text and skip if so
             if not title_skipped and title_text and heading_text == title_text:
                 print(f"Skipping title heading: {line}")
                 title_skipped = True
                 continue
 
-            # New chapter heading detected
             if current_chapter:
                 chapters.append(current_chapter)
 
-            # Start a new chapter with the current heading
             current_chapter = [line]
         else:
-            # Only add content to current_chapter if a chapter has been started
             if current_chapter:
                 current_chapter.append(line)
 
-    # Add the last chapter if it has content
     if current_chapter:
         chapters.append(current_chapter)
 
-    # Write each chapter to its own .md file
+    # Write each chapter to its own .md file and record file paths
     for idx, chapter_lines in enumerate(chapters, start=1):
         # Skip creating files for empty chapters
         if not any(line.strip() for line in chapter_lines):
@@ -107,4 +103,7 @@ def split_into_chapters(markdown_text, manuscript_title, output_dir, title_text)
         with open(chapter_path, 'w', encoding='utf-8') as f:
             f.write('\n'.join(chapter_lines))
 
+        created_chapter_files.append(chapter_path)
         print(f"Created {chapter_filename}")
+
+    return created_chapter_files
