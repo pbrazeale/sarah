@@ -5,21 +5,14 @@ from prompts.guidelines import LINE_EDITING_GUIDELINES, LINE_EDITING_EXAMPLE, DE
 load_dotenv()
 aconite_cafe_code = os.environ.get("ACONITE_CAFE_CODE")
 
-def get_llm_text(objective_selection):
-    objectives = ["Line Edit", "Developmental Edit", "Analyze and Create a Beat Sheet from"]
+def get_llm_text(objective_selection, file):
+    objectives = ["Analyze and Create a Beat Sheet from", "Developmental Edit"]
     try:
         objective = objectives[objective_selection]
     except IndexError:
         return Error("Unrecognized Editing Objective")
 
-    if objective == "Line Edit":
-        operations = f"""
-        {LINE_EDITING_GUIDELINES}
-
-        Follow the desired format: 
-        {LINE_EDITING_EXAMPLE}
-        """
-    elif objective == "Developmental Edit":
+    if objective == "Developmental Edit":
         operations = f"""
         {DEVELOPMENTAL_EDITING_GUIDELINES}
 
@@ -29,9 +22,6 @@ def get_llm_text(objective_selection):
     elif objective == "Analyze and Create a Beat Sheet from":
         operations = f"""
         {BEATSHEET_ANALYSIS_GUIDELINE}
-
-        Follow the desired format: 
-        {BEATSHEET_ANALYSIS_EXAMPLE}
         """
 
     llm_text = f"""
@@ -42,6 +32,9 @@ def get_llm_text(objective_selection):
 
     You can perform the following operations:
     {operations}
+
+    Manuscipt to perform analysis on:
+    {file}
     """
 
     return llm_text
