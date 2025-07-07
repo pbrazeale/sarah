@@ -42,7 +42,7 @@ def main():
     subgenre = "N/A"
     genre = "N/A"
 
-    genre_selection = input('What genre is your manuscript? "1: Romance", "2: Mystery", "3: Thriller", "4: Science Fiction", "5: Fantasy", "6: Horror"\n Genre: ')
+    genre_selection = input('What genre is your manuscript? "1: Romance", "2: Mystery", "3: Thriller", "4: Science Fiction", "5: Fantasy", "6: Horror"\n Slection 1, 2, 3, 4, 5, or 6: ')
     if genre_selection == "1":
         genre = "Romance"
         subgenre_selection = input('Select your subgenre: "1: Contemporary", "2: Historical", "3: Paranormal", "4: Romantic Comedy"\nSlection 1, 2, 3, or 4: ')
