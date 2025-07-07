@@ -19,22 +19,40 @@ def process_chapter():
 
         if os.path.isfile(filepath) and filename.lower().endswith('.docx'):
             document = Document(filepath)
-            full_text = []
+            markdown_lines = []
             for paragraph in document.paragraphs:
-                full_text.append(paragraph.text)
-            text = '\n\n'.join(full_text)
+                style = paragraph.style.name.lower()
+                md_line = ""
 
-            # Convert to markdown
-            markdown_text = md(text)
+                # Check if Heading
+                if "heading 1" in style:
+                    md_line += f"# {paragraph.text}"
+                elif "heading 2" in style:
+                    md_line += f"## {paragraph.text}"
+                else:
+                    # Process runs within the paragraph for bold/italic
+                    for run in paragraph.runs:
+                        run_text = run.text
+                        if run.bold:
+                            run_text = f"**{run_text}**"
+                        if run.italic:
+                            run_text = f"_{run_text}_"
+                        md_line += run_text
 
+                markdown_lines.append(md_line)
+
+            # Join all converted lines
+            markdown_text = '\n\n'.join(markdown_lines)
+
+            # Save full manuscript.md
             base_name, _ = os.path.splitext(filename)
-            new_filename = base_name + '.md'
-            output_path = os.path.join(markdown_dir, new_filename)
+            manuscript_md_filename = base_name + '.md'
+            manuscript_md_path = os.path.join(markdown_dir, manuscript_md_filename)
 
-            with open(output_path, 'w', encoding='utf-8') as f:
+            with open(manuscript_md_path, 'w', encoding='utf-8') as f:
                 f.write(markdown_text)
 
-            print(f"Processed {filename} -> {new_filename}")
+            print(f"Processed {filename} -> {manuscript_md_filename}")
 
     for filename in files:
         os.remove(os.path.join(import_dir, filename))
