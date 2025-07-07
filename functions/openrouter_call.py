@@ -7,8 +7,26 @@ from prompts.prompt import get_llm_text
 load_dotenv()
 openrouter_api_key = os.environ.get("OPENROUTER_API_KEY")
 
-def call_openrouter(objective_selection, manuscript_path, beat_sheet=None, ms_developmental_edit=None):
-  llm_text = get_llm_text(objective_selection, manuscript_path, beat_sheet, ms_developmental_edit)
+def read_file_content(file_path):
+  if not file_path or not os.path.exists(file_path):
+    return None
+  try:
+    with open(file_path, "r", encoding="utf-8") as f:
+      return f.read()
+  except Exception as e:
+    print(f"Error reading file {file_path}: {e}")
+    return None
+
+def call_openrouter(objective_selection, manuscript_path, parameters, beat_sheet_path=None, ms_developmental_edit_path=None):
+  manuscript_content = read_file_content(manuscript_path)
+  beat_sheet_content = read_file_content(beat_sheet_path)
+  ms_dev_edit_content = read_file_content(ms_developmental_edit_path)
+
+  if not manuscript_content:
+    print(f"Could not read manuscript file: {manuscript_path}")
+    return None
+
+  llm_text = get_llm_text(objective_selection, manuscript_content, parameters, beat_sheet_content, ms_dev_edit_content)
 
   client = OpenAI(
     base_url="https://openrouter.ai/api/v1",
@@ -16,10 +34,6 @@ def call_openrouter(objective_selection, manuscript_path, beat_sheet=None, ms_de
   )
 
   completion = client.chat.completions.create(
-    # extra_headers={
-    #   "HTTP-Referer": "<YOUR_SITE_URL>", # Optional. Site URL for rankings on openrouter.ai.
-    #   "X-Title": "<YOUR_SITE_NAME>", # Optional. Site title for rankings on openrouter.ai.
-    # },
     model="openai/gpt-4.1",
     messages=[
       {
@@ -44,7 +58,7 @@ def call_openrouter(objective_selection, manuscript_path, beat_sheet=None, ms_de
   if objective_selection == 0:
     objective_prefix = "Beat_Sheet_"
   elif objective_selection == 1:
-    objective_prefix = "Line_Edit_"
+    objective_prefix = "MS_Dev_Edit_"
   else:
     objective_prefix = f"Objective_{objective_selection}_"
 
