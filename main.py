@@ -57,7 +57,7 @@ def main():
             subgenre = "N/A"
     elif genre_selection == "2":
         genre = "Mystery"
-        subgenre = input('Select your subgenre: "1: Cozy", "2: Detective", "3: Noir", "4: Paranormal"\nSlection 1, 2, 3, or 4: ')
+        subgenre_selection = input('Select your subgenre: "1: Cozy", "2: Detective", "3: Noir", "4: Paranormal"\nSlection 1, 2, 3, or 4: ')
         if subgenre_selection == "1":
             subgenre = "Cozy"
         elif subgenre_selection == "2":
@@ -70,7 +70,7 @@ def main():
             subgenre = "N/A"
     elif genre_selection == "3":
         genre = "Thriller"
-        subgenre = input('Select your subgenre: "1: Psychological", "2: Political", "3: Action", "4: Crime", "5: Legal"\nSlection 1, 2, 3, 4, or 5: ')
+        subgenre_selection = input('Select your subgenre: "1: Psychological", "2: Political", "3: Action", "4: Crime", "5: Legal"\nSlection 1, 2, 3, 4, or 5: ')
         if subgenre_selection == "1":
             subgenre = "Psychological"
         elif subgenre_selection == "2":
@@ -87,7 +87,7 @@ def main():
         genre = "Science Fiction"
     elif genre_selection == "5":
         genre = "Fantasy"
-        subgenre = input('Select your subgenre: "1: Epic", "2: Urban", "3: Dark", "4: Sword & Sorcery"\nSlection 1, 2, 3, or 4: ')
+        subgenre_selection = input('Select your subgenre: "1: Epic", "2: Urban", "3: Dark", "4: Sword & Sorcery"\nSlection 1, 2, 3, or 4: ')
         if subgenre_selection == "1":
             subgenre = "Epic"
         elif subgenre_selection == "2":
