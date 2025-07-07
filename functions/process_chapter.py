@@ -36,4 +36,5 @@ def process_chapter():
 
             print(f"Processed {filename} -> {new_filename}")
 
- 
+    for filename in files:
+        os.remove(os.path.join(import_dir, filename))
