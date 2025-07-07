@@ -7,11 +7,9 @@ from functions.openrouter_call import call_openrouter
 from functions.process_chapter import process_chapter
 
 def run_with_spinner(message, target_func, *args, **kwargs):
-    # This dictionary will hold the result from the background thread
-    result_container = {}
+    result_container = {'result': None}
 
     def thread_target():
-        """The function the thread will run."""
         result_container['result'] = target_func(*args, **kwargs)
 
     thread = threading.Thread(target=thread_target)
@@ -21,21 +19,21 @@ def run_with_spinner(message, target_func, *args, **kwargs):
     
     start_time = time.time()
     sys.stdout.write(f"{message}... ")
+    sys.stdout.flush()
     
     while thread.is_alive():
-        sys.stdout.write(next(spinner))  # write the next character
-        sys.stdout.flush()               # flush stdout buffer (actual print)
+        sys.stdout.write(next(spinner))  
+        sys.stdout.flush()               
         time.sleep(0.1)
-        sys.stdout.write('\b')           # erase the last character
+        sys.stdout.write('\b')           
 
-    thread.join()  # Wait for the thread to completely finish
+    thread.join()
     end_time = time.time()
     
-    # Clean up the spinner line and print a done message
     sys.stdout.write('\b \b')
     print(f"Done in {end_time - start_time:.2f} seconds.")
     
-    return result_container.get('result')
+    return result_container['result']
 
 
 def main():
@@ -159,6 +157,10 @@ def main():
             call_openrouter,
             0, manuscript_file, parameters
         )
+    else:
+        print("Skipping Beat Sheet creation, and exiting...")
+        sys.exit()
+
 
     # 2. Create Full Manuscirpt Developmental Edit
     if beat_sheet_path:
@@ -169,9 +171,11 @@ def main():
                 call_openrouter,
                 1, manuscript_file, parameters, beat_sheet_path=beat_sheet_path
             )
+        else:
+            print("Skipping full manuscript Developmental Edit.")
 
     # 3. Chapter by Chatper Developmental Edit 
-    if chapter_files and ms_dev_edit_path:
+    if chapter_files and ms_dev_edit_path: # Ensure ms_dev_edit_path exists for context
         chapter_edit_request = input('\nWould you like to create a developmental edit for individual chapters? "Yes", "No"\nOption: ').lower()
         
         if chapter_edit_request == "yes":
@@ -183,10 +187,11 @@ def main():
                 process_this_chapter = input(f'\nCreate developmental edit for "{clean_name}"? "Yes", "No"\nOption: ').lower()
 
                 if process_this_chapter == 'yes':
+                    # Call run_with_spinner for each chapter
                      run_with_spinner(
                         f'Creating Developmental Edit for {clean_name}',
                         call_openrouter,
-                        1,
+                        2, # CORRECTED: Use objective 2 for chapter-level developmental edits
                         chapter_path,
                         parameters,
                         beat_sheet_path=beat_sheet_path,
@@ -194,21 +199,28 @@ def main():
                     )
 
                     # Ask for confirmation before deleting the source file
-                confirm_delete = input('Happy with the generated report? "Yes" to delete the original chapter file from markdown/, "No" to keep it.\nOption: ').lower()
-                if confirm_delete == 'yes':
-                    try:
-                        os.remove(chapter_path)
-                        print(f'--> DELETED original chapter file: {chapter_path}')
-                    except FileNotFoundError:
-                        print(f'--> ERROR: Could not find file to delete: {chapter_path}')
-                    except Exception as e:
-                        print(f"--> ERROR: An unexpected error occurred while deleting file: {e}")
+                    confirm_delete = input('Happy with the generated report? "Yes" to delete the original chapter file from markdown/, "No" to keep it.\nOption: ').lower()
+                    if confirm_delete == 'yes':
+                        try:
+                            os.remove(chapter_path)
+                            print(f'--> DELETED original chapter file: {chapter_path}')
+                        except FileNotFoundError:
+                            print(f'--> ERROR: Could not find file to delete: {chapter_path}')
+                        except Exception as e:
+                            print(f"--> ERROR: An unexpected error occurred while deleting file: {e}")
+                    else:
+                        print(f'--> KEPT original chapter file: {chapter_path}')
                 else:
-                    print(f'--> KEPT original chapter file: {chapter_path}')
+                    print(f'Skipping "{clean_name}".')
         else:
-            print(f'Skipping "{clean_name}".')
+            print("Skipping individual chapter edits.")
+    elif not chapter_files:
+        print("No individual chapters found to process.")
+    else: # This means chapter_files exist, but ms_dev_edit_path does not.
+        print("Cannot proceed with chapter edits as the full manuscript developmental edit was not created.")
 
-    print("\nAll tasks complete....\nThank you for chosing to work with Sharah your friendly AI editor!\nExiting.")
+
+    print("\nAll tasks complete....\nThank you for choosing to work with Sarah, your friendly AI editor!\nExiting.")
 
 if __name__ == "__main__":
     main()
