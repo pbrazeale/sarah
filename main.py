@@ -5,7 +5,6 @@ import itertools
 import sys
 from functions.openrouter_call import call_openrouter
 from functions.process_chapter import process_chapter
-from functions.parameters import parameters
 
 def run_with_spinner(message, target_func, *args, **kwargs):
     result_container = {'result': None}
