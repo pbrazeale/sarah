@@ -1,3 +1,6 @@
+import os
+from docx import Document
+
 def process_chapter():
     import_dir = './working_dir/import'
     markdown_dir = './working_dir/markdown'
@@ -57,8 +60,8 @@ def process_chapter():
             chapter_files = split_into_chapters(markdown_text, base_name, markdown_dir, title_text)
 
     # Clear import directory after processing
-    for filename in files:
-        os.remove(os.path.join(import_dir, filename))
+    # for filename in files:
+    #     os.remove(os.path.join(import_dir, filename))
 
     return manuscript_md_path, chapter_files
 
