@@ -4,13 +4,14 @@ from prompts.guidelines import (
     LINE_EDITING_GUIDELINES, LINE_EDITING_EXAMPLE,
     DEVELOPMENTAL_EDITING_GUIDELINES, DEVELOPMENTAL_EDITING_EXAMPLE,
     BEATSHEET_ANALYSIS_GUIDELINE, BEATSHEET_ANALYSIS_EXAMPLE
+    CHAPTER_DEVELOPMENTAL_EDITING_GUIDELINES,
 )
 
 load_dotenv()
 aconite_cafe_code = os.environ.get("ACONITE_CAFE_CODE")
 
 def get_llm_text(objective_selection, manuscript, parameters, beat_sheet=None, ms_developmental_edit=None):
-    objectives = ["Analyze and Create a Beat Sheet from", "Developmental Edit"]
+    objectives = ["Analyze and Create a Beat Sheet from", "Developmental Edit", "Chapter Developmental Edit"]
     try:
         objective = objectives[objective_selection]
     except IndexError:
@@ -23,6 +24,10 @@ def get_llm_text(objective_selection, manuscript, parameters, beat_sheet=None, m
     elif objective == "Analyze and Create a Beat Sheet from":
         operations = f"""
         {BEATSHEET_ANALYSIS_GUIDELINE}
+        """
+    elif objective == "Chapter Developmental Edit":
+        operations = f"""
+        {CHAPTER_DEVELOPMENTAL_EDITING_GUIDELINES}
         """
 
     llm_text = f"""
