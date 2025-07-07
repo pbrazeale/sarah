@@ -66,7 +66,7 @@ def main():
         POV = "1st person"
     elif pov_selection == "2":
         POV = "limited 3rd person"
-    elif Ppov_selectionOV == "3":
+    elif pov_selection == "3":
         POV = "omniscient 3rd person"
     else:
         POV = "N/A"
