@@ -1,4 +1,5 @@
 import os
+import time
 from functions.openrouter_call import call_openrouter
 from functions.process_chapter import process_chapter
 
@@ -115,20 +116,34 @@ def main():
     beat_sheet_path = None
     ms_dev_edit_path = None
     
-    dev_edit_request = input('\nWould you like to create a developmental edit report for the FULL manuscript? "Yes", "No"\nOption: ').lower()
-    if dev_edit_request == "yes":
-        print("\n--- Creating Beat Sheet for the Full Manuscript ---")
+    # 1. Create Beat Sheet
+    bs_dev_edit_request = input('\nWould you like to create a developmental edit report for the FULL manuscript? If Yes, I will start with a Beat Sheet. "Yes", "No"\nOption: ').lower()
+    if bs_dev_edit_request == "yes":
         # Objective 0: Create the Beat Sheet. Capture the returned file path.
         beat_sheet_path = call_openrouter(0, manuscript_file, parameters)
-        
-        if beat_sheet_path:
-            print("\n--- Creating Developmental Edit for the Full Manuscript (using Beat Sheet) ---")
-            # Objective 1: Create the Dev Edit, passing the beat sheet path as context.
-            ms_dev_edit_path = call_openrouter(1, manuscript_file, parameters, beat_sheet_path=beat_sheet_path)
-        else:
-            print("Beat sheet creation failed. Cannot proceed with manuscript developmental edit.")
+        print(f"\n--- Creating Beat Sheet for the Full Manuscript ---")
+        print(f"\n--- Please be patient ---")
+        counter = 1
+        while not beat_sheet_path:
+            time.sleep(3)
+            print(f"\n--- {coutner * 3} seconds: Still working. Thank you for your patiepatience. ---")
+            counter += 1
+        print(f"\n--- Beat Sheet for the Full Manuscript cerated in {coutner * 3} seconds ---")
 
-    # Chapter by Chatper Developmental Edit 
+    # 2. Create Full Manuscirpt Developmental Edit
+    ms_dev_edit_request = input('\nPlease read the provided Beat Sheet and verify it captures your manuscripts plot?\nIf Yes, would you like a full manuscript Developmental Edit. "Yes", "No"\nOption: ').lower()
+    if ms_dev_edit_request == "yes":
+        ms_dev_edit_path = call_openrouter(1, manuscript_file, parameters, beat_sheet_path=beat_sheet_path)
+        print("\n--- Creating Developmental Edit for the Full Manuscript ---")
+        print(f"\n--- Please be patient ---")
+        counter = 1
+        while not ms_dev_edit_path:
+            time.sleep(3)
+            print(f"\n--- {coutner * 3} seconds: Still working. Thank you for your patiepatience. ---")
+            counter += 1
+        print(f"\n--- Developmental Edit for the Full Manuscript cerated in {coutner * 3} seconds ---")
+
+    # 3. Chapter by Chatper Developmental Edit 
     chapter_edit_request = input('\nWould you like to create a developmental edit for individual chapters? "Yes", "No"\nOption: ').lower()
     
     if not chapter_files:
@@ -146,6 +161,14 @@ def main():
             if process_this_chapter == 'yes':
                 print(f'Sending "{clean_name}" for developmental edit...')
                 call_openrouter(0, chapter_path, parameters, beat_sheet_path, ms_dev_edit_path)
+                print(f"\n--- Creating Developmental Edit for {clean_name} ---")
+                print(f"\n--- Please be patient ---")
+                counter = 1
+                while not ms_dev_edit_path:
+                    time.sleep(3)
+                    print(f"\n--- {coutner * 3} seconds: Still working. Thank you for your patiepatience. ---")
+                    counter += 1
+                print(f"\n--- Developmental Edit for {clean_name} cerated in {coutner * 3} seconds ---")
 
                 # Ask for confirmation before deleting the source file
                 confirm_delete = input('Happy with the generated report? "Yes" to delete the original chapter file from markdown/, "No" to keep it.\nOption: ').lower()
@@ -162,7 +185,7 @@ def main():
             else:
                 print(f'Skipping "{clean_name}".')
 
-    print("\nAll tasks complete. Exiting.")
+    print("\nAll tasks complete....\nThank you for chosing to work with Sharah your friendly AI editor!\nExiting.")
 
 if __name__ == "__main__":
     main()
