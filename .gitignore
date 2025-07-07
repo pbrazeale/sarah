@@ -1,3 +1,9 @@
 .venv
 .env
 prompts/guidelines.py
+prompts/beatsheet_analysis_example.md
+prompts/__pycache__
+__pycache__
+
+# Files to ignore (manuscript)
+working_dir/import/Murder and Macaw_Final_03032024.docx
