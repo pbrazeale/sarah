@@ -16,7 +16,7 @@ def main():
     if manuscript_file is None:
         print("No manuscript processed. Exiting.")
         return
-
+    
     # Create parameters
     POV = input('What is your point of view:\n1 -> 1st person\n2 -> limited 3rd person\n3 -> omniscient 3rd person\nSlection 1, 2, or 3: ')
     if POV == 1:
@@ -59,18 +59,23 @@ def main():
         "genre": genre,
         "subgenre": subgenre,
     }
+
     # Start of Developmental Edit
-    create_developmental_edit = False
-    while not create_developmental_edit:
-        beat_sheet_request = input('\nWould you like to create a developmental edit report for the FULL manuscript? "Yes", "No"\nOption: ')
-        beat_sheet_request = beat_sheet_request.lower()
-        if beat_sheet_request == "yes":
-            create_developmental_edit = True
-            print("\n--- Creating Developmental Edit for the Full Manuscript ---")
-            # Creats the Beat_Sheet used moving forward
-            call_openrouter(0, manuscript_file, parameters)
-            # Creates the Main Developmental Edit Docuemnt used moving forward 
-            call_openrouter(1, manuscript_file, parameters, beat_sheet_manuscript)
+    beat_sheet_path = None
+    ms_dev_edit_path = None
+    
+    dev_edit_request = input('\nWould you like to create a developmental edit report for the FULL manuscript? "Yes", "No"\nOption: ').lower()
+    if dev_edit_request == "yes":
+        print("\n--- Creating Beat Sheet for the Full Manuscript ---")
+        # Objective 0: Create the Beat Sheet. Capture the returned file path.
+        beat_sheet_path = call_openrouter(0, manuscript_file)
+        
+        if beat_sheet_path:
+            print("\n--- Creating Developmental Edit for the Full Manuscript (using Beat Sheet) ---")
+            # Objective 1: Create the Dev Edit, passing the beat sheet path as context.
+            ms_dev_edit_path = call_openrouter(1, manuscript_file, beat_sheet_path=beat_sheet_path)
+        else:
+            print("Beat sheet creation failed. Cannot proceed with manuscript developmental edit.")
 
     # Chapter by Chatper Developmental Edit 
     chapter_edit_request = input('\nWould you like to create a developmental edit for individual chapters? "Yes", "No"\nOption: ').lower()
@@ -89,7 +94,7 @@ def main():
 
             if process_this_chapter == 'yes':
                 print(f'Sending "{clean_name}" for developmental edit...')
-                call_openrouter(0, chapter_path, parameters, beat_sheet_manuscript, developmental_edit_manuscript)
+                call_openrouter(0, chapter_path, parameters, beat_sheet_path, ms_dev_edit_path)
 
                 # Ask for confirmation before deleting the source file
                 confirm_delete = input('Happy with the generated report? "Yes" to delete the original chapter file from markdown/, "No" to keep it.\nOption: ').lower()
