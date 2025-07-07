@@ -195,18 +195,18 @@ def main():
 
                     # Ask for confirmation before deleting the source file
                 confirm_delete = input('Happy with the generated report? "Yes" to delete the original chapter file from markdown/, "No" to keep it.\nOption: ').lower()
-                    if confirm_delete == 'yes':
-                        try:
-                            os.remove(chapter_path)
-                            print(f'--> DELETED original chapter file: {chapter_path}')
-                        except FileNotFoundError:
-                            print(f'--> ERROR: Could not find file to delete: {chapter_path}')
-                        except Exception as e:
-                            print(f"--> ERROR: An unexpected error occurred while deleting file: {e}")
-                    else:
-                        print(f'--> KEPT original chapter file: {chapter_path}')
+                if confirm_delete == 'yes':
+                    try:
+                        os.remove(chapter_path)
+                        print(f'--> DELETED original chapter file: {chapter_path}')
+                    except FileNotFoundError:
+                        print(f'--> ERROR: Could not find file to delete: {chapter_path}')
+                    except Exception as e:
+                        print(f"--> ERROR: An unexpected error occurred while deleting file: {e}")
                 else:
-                    print(f'Skipping "{clean_name}".')
+                    print(f'--> KEPT original chapter file: {chapter_path}')
+        else:
+            print(f'Skipping "{clean_name}".')
 
     print("\nAll tasks complete....\nThank you for chosing to work with Sharah your friendly AI editor!\nExiting.")
 
