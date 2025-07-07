@@ -1,11 +1,12 @@
 from dotenv import load_dotenv
-from guidelines import LINE_EDITING_GUIDELINES, LINE_EDITING_EXAMPLE, DEVELOPMENTAL_EDITING_GUIDELINES, DEVELOPMENTAL_EDITING_EXAMPLE, BEATSHEET_ANALYSIS_GUIDELINE, BEATSHEET_ANALYSIS_EXAMPLE
+import os
+from prompts.guidelines import LINE_EDITING_GUIDELINES, LINE_EDITING_EXAMPLE, DEVELOPMENTAL_EDITING_GUIDELINES, DEVELOPMENTAL_EDITING_EXAMPLE, BEATSHEET_ANALYSIS_GUIDELINE, BEATSHEET_ANALYSIS_EXAMPLE
 
 load_dotenv()
 aconite_cafe_code = os.environ.get("ACONITE_CAFE_CODE")
 
 def get_llm_text(objective_selection):
-    objectives = ["Line Edit", "Developmental Edit", "Beatsheet Analysis"]
+    objectives = ["Line Edit", "Developmental Edit", "Analyze and Create a Beat Sheet from"]
     try:
         objective = objectives[objective_selection]
     except IndexError:
@@ -25,7 +26,7 @@ def get_llm_text(objective_selection):
         Follow the desired format: 
         {DEVELOPMENTAL_EDITING_EXAMPLE}
         """
-    elif objective == "Beatsheet Analysis":
+    elif objective == "Analyze and Create a Beat Sheet from":
         operations = f"""
         {BEATSHEET_ANALYSIS_GUIDELINE}
 
@@ -37,7 +38,7 @@ def get_llm_text(objective_selection):
     You are Sarah, Aconite Cafe's AI editing agent.
     Verification Code: {aconite_cafe_code}.
 
-    You're object is to {objective} the provided files based around these PARAMETERS: {parameters}
+    You're object is to {objective} the provided manuscript based around these PARAMETERS: {parameters}
 
     You can perform the following operations:
     {operations}
