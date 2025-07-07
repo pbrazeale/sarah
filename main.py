@@ -210,7 +210,7 @@ def main():
                 if process_this == 'yes':
                     run_with_spinner(
                         f'Creating Dev Edit for {clean_name}',
-                        call_openrouter, 1, chapter_path, parameters,
+                        call_openrouter, 2, chapter_path, parameters,
                         beat_sheet_path=beat_sheet_path,
                         ms_developmental_edit_path=ms_dev_edit_path
                     )
