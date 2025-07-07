@@ -8,50 +8,59 @@ from functions.process_chapter import process_chapter
 
 def run_with_spinner(message, target_func, *args, **kwargs):
     result_container = {'result': None}
-
     def thread_target():
         result_container['result'] = target_func(*args, **kwargs)
-
     thread = threading.Thread(target=thread_target)
     thread.start()
-
     spinner = itertools.cycle(['-', '/', '|', '\\'])
-    
     start_time = time.time()
     sys.stdout.write(f"{message}... ")
     sys.stdout.flush()
-    
     while thread.is_alive():
-        sys.stdout.write(next(spinner))  
-        sys.stdout.flush()               
+        sys.stdout.write(next(spinner))
+        sys.stdout.flush()
         time.sleep(0.1)
-        sys.stdout.write('\b')           
-
+        sys.stdout.write('\b')
     thread.join()
     end_time = time.time()
-    
     sys.stdout.write('\b \b')
     print(f"Done in {end_time - start_time:.2f} seconds.")
-    
     return result_container['result']
 
+def find_latest_file(directory, prefix, manuscript_basename):
+    try:
+        matching_files = [
+            os.path.join(directory, f)
+            for f in os.listdir(directory)
+            if f.startswith(prefix) and manuscript_basename in f
+        ]
+        if not matching_files:
+            return None
+        return sorted(matching_files, key=os.path.getmtime, reverse=True)[0]
+    except FileNotFoundError:
+        return None
 
 def main():
-    # Initial processing from .docx -> .md for cleaner LLM interface
+    # --- Part 1: One-Time Setup ---
+    print("--- Welcome to Sarah, your AI Editor ---")
     chapter_processing = False
     while not chapter_processing:
         chapter_processing_request = input('Have you placed your manuscript in ./working_dir/import? "Yes", "No"\nOption: ')
         chapter_processing_request = chapter_processing_request.lower()
         if chapter_processing_request == "yes":
             chapter_processing = True
-    
+        
     manuscript_file, chapter_files = process_chapter()
 
     if manuscript_file is None:
-        print("No manuscript processed. Exiting.")
+        print("Could not process manuscript. Exiting.")
         return
     
-    # Parameters Selection 
+    manuscript_basename, _ = os.path.splitext(os.path.basename(manuscript_file))
+    export_dir = os.path.join("working_dir", "export")
+    
+    # --- Parameter Collection ---
+    print("\n--- Manuscript Parameters ---")
     pov_selection = input('What is your point of view:\n1 -> 1st person\n2 -> limited 3rd person\n3 -> omniscient 3rd person\nSlection 1, 2, or 3: ')
     if pov_selection == "1":
         POV = "1st person"
@@ -64,7 +73,7 @@ def main():
     
     MC = input('What is the name of your main character? First name, or First and Last\nMain Character: ')
 
-    tense_selection = input('What tense if your mansucript written in? "1: Present" or "2: Past"\nSlection 1, or 2: ')
+    tense_selection = input('What tense if your mansucript written in?\n1 -> Present\n2 -> Past\nSlection 1, or 2: ')
     if tense_selection == "1":
         tense = "Present"
     elif tense_selection == "2":
@@ -75,10 +84,10 @@ def main():
     subgenre = "N/A"
     genre = "N/A"
 
-    genre_selection = input('What genre is your manuscript? "1: Romance", "2: Mystery", "3: Thriller", "4: Science Fiction", "5: Fantasy", "6: Horror"\n Slection 1, 2, 3, 4, 5, or 6: ')
+    genre_selection = input('What genre is your manuscript?\n1 -> Romance\n2 -> Mystery\n3 -> Thriller\n4 -> Science Fiction\n5 -> Fantasy\n6 -> Horror\n Slection 1, 2, 3, 4, 5, or 6: ')
     if genre_selection == "1":
         genre = "Romance"
-        subgenre_selection = input('Select your subgenre: "1: Contemporary", "2: Historical", "3: Paranormal", "4: Romantic Comedy"\nSlection 1, 2, 3, or 4: ')
+        subgenre_selection = input('Select your subgenre\n1 -> Contemporary\n2 -> Historical\n3 -> Paranormal\n4 -> Romantic Comedy\nSlection 1, 2, 3, or 4: ')
         if subgenre_selection == "1":
             subgenre = "Contemporary"
         elif subgenre_selection == "2":
@@ -91,7 +100,7 @@ def main():
             subgenre = "N/A"
     elif genre_selection == "2":
         genre = "Mystery"
-        subgenre_selection = input('Select your subgenre: "1: Cozy", "2: Detective", "3: Noir", "4: Paranormal"\nSlection 1, 2, 3, or 4: ')
+        subgenre_selection = input('Select your subgenre\n1 -> Cozy\n2 -> Detective\n3 -> Noir\n4 -> Paranormal\nSlection 1, 2, 3, or 4: ')
         if subgenre_selection == "1":
             subgenre = "Cozy"
         elif subgenre_selection == "2":
@@ -104,7 +113,7 @@ def main():
             subgenre = "N/A"
     elif genre_selection == "3":
         genre = "Thriller"
-        subgenre_selection = input('Select your subgenre: "1: Psychological", "2: Political", "3: Action", "4: Crime", "5: Legal"\nSlection 1, 2, 3, 4, or 5: ')
+        subgenre_selection = input('Select your subgenre:\n1 -> Psychological\n2 -> Political\n3 -> Action\n4 -> Crime\n5 -> Legal\nSlection 1, 2, 3, 4, or 5: ')
         if subgenre_selection == "1":
             subgenre = "Psychological"
         elif subgenre_selection == "2":
@@ -121,7 +130,7 @@ def main():
         genre = "Science Fiction"
     elif genre_selection == "5":
         genre = "Fantasy"
-        subgenre_selection = input('Select your subgenre: "1: Epic", "2: Urban", "3: Dark", "4: Sword & Sorcery"\nSlection 1, 2, 3, or 4: ')
+        subgenre_selection = input('Select your subgenre\n1 -> Epic\n2 -> Urban\n3 -> Dark\n4 -> Sword & Sorcery\nSlection 1, 2, 3, or 4: ')
         if subgenre_selection == "1":
             subgenre = "Epic"
         elif subgenre_selection == "2":
@@ -144,76 +153,81 @@ def main():
         "genre": genre,
         "subgenre": subgenre,
     }
-    
-    # Start of Developmental Edit
-    beat_sheet_path = None
-    ms_dev_edit_path = None
-    
-    # 1. Create Beat Sheet
-    bs_dev_edit_request = input('\nWould you like to create a developmental edit report for the FULL manuscript? If Yes, I will start with a Beat Sheet. "Yes", "No"\nOption: ').lower()
-    if bs_dev_edit_request == "yes":
-         beat_sheet_path = run_with_spinner(
-            "Creating Beat Sheet for the Full Manuscript",
-            call_openrouter,
-            0, manuscript_file, parameters
-        )
-    else:
-        print("Skipping Beat Sheet creation, and exiting...")
-        sys.exit()
+
+    # --- Part 2: Main Application Loop ---
+    beat_sheet_path = find_latest_file(export_dir, "Beat_Sheet_", manuscript_basename)
+    ms_dev_edit_path = find_latest_file(export_dir, "MS_Dev_Edit_", manuscript_basename)
+
+    while True:
+        # Display current status at the start of the loop
+        print("\n" + "="*40)
+        print("--- MAIN MENU ---")
+        print(f"Manuscript: {manuscript_basename}")
+        print(f"Beat Sheet:      {os.path.basename(beat_sheet_path) if beat_sheet_path else 'NOT CREATED'}")
+        print(f"MS Dev Edit:     {os.path.basename(ms_dev_edit_path) if ms_dev_edit_path else 'NOT CREATED'}")
+        print("="*40)
+        
+        print("Please choose an action:")
+        print("1. Generate/Overwrite Beat Sheet")
+        print("2. Generate/Overwrite Manuscript Developmental Edit")
+        print("3. Process Individual Chapter's Developmental Edit")
+        print("4. Exit")
+        
+        choice = input("Option: ")
+
+        if choice == '1':
+            if beat_sheet_path:
+                if input("Beat Sheet already exists. Overwrite? (yes/no): ").lower() != 'yes':
+                    continue
+            beat_sheet_path = run_with_spinner(
+                "Creating Beat Sheet",
+                call_openrouter, 0, manuscript_file, parameters
+            )
+
+        elif choice == '2':
+            if not beat_sheet_path:
+                print("\nERROR: You must generate a Beat Sheet (Option 1) before this step.")
+                time.sleep(2)
+                continue
+            if ms_dev_edit_path:
+                if input("MS Dev Edit already exists. Overwrite? (yes/no): ").lower() != 'yes':
+                    continue
+            ms_dev_edit_path = run_with_spinner(
+                "Creating Manuscript Dev Edit",
+                call_openrouter, 1, manuscript_file, parameters, beat_sheet_path=beat_sheet_path
+            )
+
+        elif choice == '3':
+            if not ms_dev_edit_path:
+                print("\nERROR: You must generate a Manuscript Dev Edit (Option 2) before this step.")
+                time.sleep(2)
+                continue
+            
+            print("\n--- Starting Individual Chapter Processing ---")
+            for chapter_path in chapter_files:
+                clean_name = os.path.splitext(os.path.basename(chapter_path))[0]
+                process_this = input(f'\nProcess "{clean_name}"? (yes/no): ').lower()
+                if process_this == 'yes':
+                    run_with_spinner(
+                        f'Creating Dev Edit for {clean_name}',
+                        call_openrouter, 1, chapter_path, parameters,
+                        beat_sheet_path=beat_sheet_path,
+                        ms_developmental_edit_path=ms_dev_edit_path
+                    )
+                    # You could add the delete confirmation logic back here if you wish
+                else:
+                    print(f'Skipping "{clean_name}".')
+            print("\nFinished processing all selected chapters.")
+            time.sleep(2)
 
 
-    # 2. Create Full Manuscirpt Developmental Edit
-    ms_dev_edit_request = input('\nPlease read the provided Beat Sheet and verify it captures your manuscripts plot?\nIf Yes, would you like a full manuscript Developmental Edit. "Yes", "No"\nOption: ').lower()
-    if ms_dev_edit_request == "yes":
-        ms_dev_edit_path = run_with_spinner(
-            "Creating Developmental Edit for the Full Manuscript",
-            call_openrouter,
-            1, manuscript_file, parameters, beat_sheet_path=beat_sheet_path
-        )
-    else:
-        print("Skipping full manuscript Developmental Edit.")
+        elif choice == '4':
+            print("\nThank you for choosing to work with Sarah, your friendly AI editor!\nExiting.")
+            break
 
-    # 3. Chapter by Chatper Developmental Edit 
-    chapter_edit_request = input('\nWould you like to create a developmental edit for individual chapters? "Yes", "No"\nOption: ').lower()        
-    if chapter_edit_request == "yes":
-        print("\n--- Starting Individual Chapter Processing ---")
-        for chapter_path in chapter_files:
-            base_name = os.path.basename(chapter_path)
-            clean_name, _ = os.path.splitext(base_name)
-
-            process_this_chapter = input(f'\nCreate developmental edit for "{clean_name}"? "Yes", "No"\nOption: ').lower()
-
-            if process_this_chapter == 'yes':
-                # Call run_with_spinner for each chapter
-                run_with_spinner(
-                    f'Creating Developmental Edit for {clean_name}',
-                    call_openrouter,
-                    2, # CORRECTED: Use objective 2 for chapter-level developmental edits
-                    chapter_path,
-                    parameters,
-                    beat_sheet_path=beat_sheet_path,
-                    ms_developmental_edit_path=ms_dev_edit_path
-                )
-            else:
-                print(f'Skipping "{clean_name}".')
-
-            # Ask for confirmation before deleting the source file
-            confirm_delete = input('Happy with the generated report? "Yes" to delete the original chapter file from markdown/, "No" to keep it.\nOption: ').lower()
-            if confirm_delete == 'yes':
-                try:
-                    os.remove(chapter_path)
-                    print(f'--> DELETED original chapter file: {chapter_path}')
-                except FileNotFoundError:
-                    print(f'--> ERROR: Could not find file to delete: {chapter_path}')
-                except Exception as e:
-                    print(f"--> ERROR: An unexpected error occurred while deleting file: {e}")
-            else:
-                print(f'--> KEPT original chapter file: {chapter_path}')
-    else:
-        print("Skipping individual chapter edits.")
-
-
-print("\nAll tasks complete....\nThank you for choosing to work with Sarah, your friendly AI editor!\nExiting.")
+        else:
+            print("Invalid choice. Please enter a number from 1 to 4.")
+            time.sleep(2)
 
 if __name__ == "__main__":
     main()
