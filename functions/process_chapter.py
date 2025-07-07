@@ -1,6 +1,5 @@
 import os
 from docx import Document
-from markdownify import markdownify as md
 
 def process_chapter():
     import_dir = './working_dir/import'
@@ -27,12 +26,12 @@ def process_chapter():
                 md_line = ""
 
                 if "title" in style:
-                    title_text = paragraph.text
+                    title_text = paragraph.text.strip()
                     continue
                 elif "heading 1" in style:
-                    md_line += f"# {paragraph.text}"
+                    md_line += f"# {paragraph.text.strip()}"
                 elif "heading 2" in style:
-                    md_line += f"## {paragraph.text}"
+                    md_line += f"## {paragraph.text.strip()}"
                 else:
                     for run in paragraph.runs:
                         run_text = run.text
@@ -57,19 +56,30 @@ def process_chapter():
 
             print(f"Processed {filename} -> {manuscript_md_filename}")
 
-            split_into_chapters(markdown_text, base_name, markdown_dir)
+            split_into_chapters(markdown_text, base_name, markdown_dir, title_text)
 
-
+    # Clear import directory after processing
     for filename in files:
         os.remove(os.path.join(import_dir, filename))
 
-def split_into_chapters(markdown_text, manuscript_title, output_dir):
+
+def split_into_chapters(markdown_text, manuscript_title, output_dir, title_text):
     chapters = []
     current_chapter = []
     lines = markdown_text.split('\n')
 
+    title_skipped = False
+
     for line in lines:
         if line.startswith('# '):
+            heading_text = line[2:].strip()
+
+            # Check if this heading matches the title_text and skip if so
+            if not title_skipped and title_text and heading_text == title_text:
+                print(f"Skipping title heading: {line}")
+                title_skipped = True
+                continue
+
             # New chapter heading detected
             if current_chapter:
                 chapters.append(current_chapter)
