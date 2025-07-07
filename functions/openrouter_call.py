@@ -74,6 +74,8 @@ def call_openrouter(objective_selection, manuscript_path, parameters, beat_sheet
     with open(filepath, "w", encoding="utf-8") as f:
       f.write(response_content)
     print(f"Successfully saved response to: {filepath}")
+    return filepath
   except IOError as e:
     print(f"Error writing to file {filepath}: {e}")
+    return None
 

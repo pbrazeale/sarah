@@ -25,7 +25,7 @@ def run_with_spinner(message, target_func, *args, **kwargs):
     end_time = time.time()
     sys.stdout.write('\b \b')
     print(f"Done in {end_time - start_time:.2f} seconds.")
-    return result_container['result']
+    return result_container.get('result')
 
 def find_latest_file(directory, prefix, manuscript_basename):
     try:
