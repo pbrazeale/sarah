@@ -5,7 +5,7 @@ from prompts.guidelines import LINE_EDITING_GUIDELINES, LINE_EDITING_EXAMPLE, DE
 load_dotenv()
 aconite_cafe_code = os.environ.get("ACONITE_CAFE_CODE")
 
-def get_llm_text(objective_selection, file):
+def get_llm_text(objective_selection, manuscript, beat_sheet=None, ms_developmental_edit=None):
     objectives = ["Analyze and Create a Beat Sheet from", "Developmental Edit"]
     try:
         objective = objectives[objective_selection]
@@ -33,8 +33,19 @@ def get_llm_text(objective_selection, file):
     You can perform the following operations:
     {operations}
 
-    Manuscipt to perform analysis on:
-    {file}
+    ---
+
+    # Helpful documents you made for yourself:
+    {beat_sheet}
+    
+    ---
+
+    {ms_developmental_edit}
+
+    ---
+    
+    # Manuscipt to perform analysis on:
+    {manuscript}
     """
 
     return llm_text
