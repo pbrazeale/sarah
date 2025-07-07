@@ -20,17 +20,20 @@ def process_chapter():
         if os.path.isfile(filepath) and filename.lower().endswith('.docx'):
             document = Document(filepath)
             markdown_lines = []
+            title_text = ""
+
             for paragraph in document.paragraphs:
                 style = paragraph.style.name.lower()
                 md_line = ""
 
-                # Check if Heading
-                if "heading 1" in style:
+                if "title" in style:
+                    title_text = paragraph.text
+                    continue
+                elif "heading 1" in style:
                     md_line += f"# {paragraph.text}"
                 elif "heading 2" in style:
                     md_line += f"## {paragraph.text}"
                 else:
-                    # Process runs within the paragraph for bold/italic
                     for run in paragraph.runs:
                         run_text = run.text
                         if run.bold:
@@ -56,7 +59,7 @@ def process_chapter():
 
             split_into_chapters(markdown_text, base_name, markdown_dir)
 
-            
+
     for filename in files:
         os.remove(os.path.join(import_dir, filename))
 
