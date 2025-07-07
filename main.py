@@ -126,9 +126,9 @@ def main():
         counter = 1
         while not beat_sheet_path:
             time.sleep(3)
-            print(f"\n--- {coutner * 3} seconds: Still working. Thank you for your patiepatience. ---")
+            print(f"\n--- {counter * 3} seconds: Still working. Thank you for your patiepatience. ---")
             counter += 1
-        print(f"\n--- Beat Sheet for the Full Manuscript cerated in {coutner * 3} seconds ---")
+        print(f"\n--- Beat Sheet for the Full Manuscript cerated in {counter * 3} seconds ---")
 
     # 2. Create Full Manuscirpt Developmental Edit
     ms_dev_edit_request = input('\nPlease read the provided Beat Sheet and verify it captures your manuscripts plot?\nIf Yes, would you like a full manuscript Developmental Edit. "Yes", "No"\nOption: ').lower()
@@ -139,9 +139,9 @@ def main():
         counter = 1
         while not ms_dev_edit_path:
             time.sleep(3)
-            print(f"\n--- {coutner * 3} seconds: Still working. Thank you for your patiepatience. ---")
+            print(f"\n--- {counter * 3} seconds: Still working. Thank you for your patiepatience. ---")
             counter += 1
-        print(f"\n--- Developmental Edit for the Full Manuscript cerated in {coutner * 3} seconds ---")
+        print(f"\n--- Developmental Edit for the Full Manuscript cerated in {counter * 3} seconds ---")
 
     # 3. Chapter by Chatper Developmental Edit 
     chapter_edit_request = input('\nWould you like to create a developmental edit for individual chapters? "Yes", "No"\nOption: ').lower()
@@ -166,9 +166,9 @@ def main():
                 counter = 1
                 while not ms_dev_edit_path:
                     time.sleep(3)
-                    print(f"\n--- {coutner * 3} seconds: Still working. Thank you for your patiepatience. ---")
+                    print(f"\n--- {counter * 3} seconds: Still working. Thank you for your patiepatience. ---")
                     counter += 1
-                print(f"\n--- Developmental Edit for {clean_name} cerated in {coutner * 3} seconds ---")
+                print(f"\n--- Developmental Edit for {clean_name} cerated in {counter * 3} seconds ---")
 
                 # Ask for confirmation before deleting the source file
                 confirm_delete = input('Happy with the generated report? "Yes" to delete the original chapter file from markdown/, "No" to keep it.\nOption: ').lower()
