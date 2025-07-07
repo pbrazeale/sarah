@@ -19,9 +19,6 @@ def get_llm_text(objective_selection, manuscript, parameters, beat_sheet=None, m
     if objective == "Developmental Edit":
         operations = f"""
         {DEVELOPMENTAL_EDITING_GUIDELINES}
-
-        Follow the desired format: 
-        {DEVELOPMENTAL_EDITING_EXAMPLE}
         """
     elif objective == "Analyze and Create a Beat Sheet from":
         operations = f"""
@@ -35,6 +32,11 @@ def get_llm_text(objective_selection, manuscript, parameters, beat_sheet=None, m
     You're object is to {objective} the provided manuscript based around these PARAMETERS: 
     {parameters}
 
+    ---
+
+    You can perform the following operations:
+    {operations}
+    
     ---
 
     # Helpful documents you made for yourself:
