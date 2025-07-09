@@ -2,6 +2,7 @@
 
 Sarah is an **AI-powered editing assistant** designed to help fiction authors refine their manuscripts with professional-grade insights. It automates chapter parsing, beat sheet analysis, line editing, and developmental feedback to support your storytelling and publishing goals.
 
+![SARAH demo Twenty Thousand Leagues Under the Sea](https://pbrazeale.github.io/images/SARAH_demo.gif)
 ---
 
 ## ✨ Key Features
