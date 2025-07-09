@@ -129,3 +129,4 @@ This project is currently proprietary to Aconite Cafe for internal author toolin
 Sarah is developed by Aconite Cafe, combining AI editing expertise with indie author publishing experience to create tools that empower storytellers.
 
 “Helping authors tell better stories, one AI edit at a time.”
+  
