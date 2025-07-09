@@ -1,4 +1,4 @@
-# Sarah: AI Developmental Editor for Fiction Authors
+# SARAH: Story Analysis & Revision AI Helper
 
 Sarah is an **AI-powered editing assistant** designed to help fiction authors refine their manuscripts with professional-grade insights. It automates chapter parsing, beat sheet analysis, line editing, and developmental feedback to support your storytelling and publishing goals.
 
