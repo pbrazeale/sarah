@@ -26,7 +26,7 @@ if "main_character" not in st.session_state:
     st.session_state.main_character = ""
 
 # --- Display Summary (first!) ---
-st.title("🛠️ Parameters")
+st.title("⚙️ Parameters")
 
 st.markdown("### 📋 Summary")
 
