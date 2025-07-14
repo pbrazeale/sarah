@@ -2,7 +2,7 @@
 import streamlit as st
 
 USERS = {
-    "demo@example.com": "password123",
+    "test@test.com": "test123",
     "admin@example.com": "adminpass"
 }
 
@@ -13,7 +13,7 @@ def show_auth_block():
         if st.button("Logout"):
             st.session_state.logged_in = False
             st.session_state.user_email = ""
-            st.experimental_rerun()
+            st.rerun()
     else:
         with st.form("login_form"):
             email = st.text_input("Email")
@@ -24,6 +24,6 @@ def show_auth_block():
                     st.session_state.logged_in = True
                     st.session_state.user_email = email
                     st.success(f"Welcome, {email}!")
-                    st.experimental_rerun()
+                    st.rerun()
                 else:
                     st.error("Invalid credentials")
