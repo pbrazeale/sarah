@@ -1,5 +1,6 @@
 import streamlit as st
 import os
+import re
 from auth import show_auth_block
 from functions.process_chapter import process_chapter
 
@@ -47,6 +48,36 @@ if st.button("🛠️ 1. Chapter Identification"):
     with st.spinner("Running SARAH's chapter processor..."):
         process_chapter()
     st.success("✅ Processing complete!")
+
+if st.button("🧠 2. Beat Sheet Analysis"):
+    with st.spinner("Generating beat sheet..."):
+        generate_beat_sheet()
+    st.success("✅ Beat sheet created.")
+
+markdown_dir = "./working_dir/markdown"
+os.makedirs(markdown_dir, exist_ok=True)
+
+if st.button("🧠 3. Full Manuscript Developmental Feedback"):
+    with st.spinner("Running full manuscript analysis..."):
+        deleted_file = full_dev_feedback(markdown_dir)
+    if deleted_file:
+        st.success(f"✅ {deleted_file} removed from segments.")
+    else:
+        st.warning("No full manuscript found to delete.")
+
+# Automatically detect next chapter
+chapter_files = sorted([f for f in os.listdir(markdown_dir) if f.startswith("Chapter") and f.endswith(".md")])
+
+next_chapter = chapter_files[0] if chapter_files else None
+
+if next_chapter:
+    next_chapter_path = os.path.join(markdown_dir, next_chapter)
+    if st.button(f"🧠 4. '{next_chapter}' Developmental Feedback"):
+        with st.spinner(f"Analyzing {next_chapter}..."):
+            chapter_dev_feedback(next_chapter_path)
+        st.success(f"✅ Chapter feedback for {next_chapter} complete.")
+else:
+    st.info("No chapter files found to analyze.")
 st.divider()
 
 st.markdown("### ✂️ Segments to Edit")
