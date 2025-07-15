@@ -11,7 +11,7 @@ if not st.session_state.get("logged_in", False):
     st.stop()
 
 # Export Title
-st.title("📤 Export")
+st.title("📤 Download")
 st.markdown('''
 ### Downlaod **SARAH**'s developmental edits and story analysis.
 ''', width="stretch",)
