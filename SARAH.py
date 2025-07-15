@@ -19,7 +19,7 @@ st.html(
         <h1 style="font-size: 3rem;">🧠 SARAH</h1>
         <h3 style="color: #6c757d;">Story Analysis & Revision AI Helper</h3>
         <p style="max-width: 700px; margin: auto; font-size: 1.2rem; text-align: justify;">
-            <b>Sarah</b> is an AI-powered <b>developmental edititor</b> designed to assist authors refine their manuscripts with professional-grade insights and support your storytelling and publishing goals.
+            <b>Sarah</b> is an AI-powered <b>developmental edititor</b> designed to assist authors to refine their manuscripts, with professional-grade insights, and support your storytelling and publishing goals.
         </p>
         <br>
     </div>
