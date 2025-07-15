@@ -1,5 +1,6 @@
 import os
 from docx import Document
+import re
 
 def process_chapter():
     import_dir = './working_dir/import'
@@ -48,7 +49,8 @@ def process_chapter():
 
             # Save full manuscript.md
             base_name, _ = os.path.splitext(filename)
-            manuscript_md_filename = base_name + '.md'
+            safe_title = re.sub(r'\W+', '_', base_name)
+            manuscript_md_filename = f"00_{safe_title}.md"
             manuscript_md_path = os.path.join(markdown_dir, manuscript_md_filename)
 
             with open(manuscript_md_path, 'w', encoding='utf-8') as f:
@@ -83,7 +85,7 @@ def split_into_chapters(markdown_text, manuscript_title, output_dir, title_text)
                 title_skipped = True
                 continue
 
-            if current_chapter:
+            if current_chapter and contains_real_text(current_chapter):
                 chapters.append(current_chapter)
 
             current_chapter = [line]
@@ -91,16 +93,13 @@ def split_into_chapters(markdown_text, manuscript_title, output_dir, title_text)
             if current_chapter:
                 current_chapter.append(line)
 
-    if current_chapter:
+    if current_chapter and contains_real_text(current_chapter):
         chapters.append(current_chapter)
 
-    # Write each chapter to its own .md file and record file paths
+     # Write chapters to individual files
     for idx, chapter_lines in enumerate(chapters, start=1):
-        # Skip creating files for empty chapters
-        if not any(line.strip() for line in chapter_lines):
-            continue
-
-        chapter_filename = f"Chapter {idx} {manuscript_title}.md"
+        chapter_num = f"{idx:02}"
+        chapter_filename = f"Chapter {chapter_num} {manuscript_title}.md"
         chapter_path = os.path.join(output_dir, chapter_filename)
 
         with open(chapter_path, 'w', encoding='utf-8') as f:
@@ -110,3 +109,10 @@ def split_into_chapters(markdown_text, manuscript_title, output_dir, title_text)
         print(f"Created {chapter_filename}")
 
     return created_chapter_files
+
+
+def contains_real_text(lines):
+    for line in lines[1:]:
+        if line.strip() and not line.strip().startswith('#'):
+            return True
+    return False
