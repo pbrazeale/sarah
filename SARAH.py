@@ -9,10 +9,7 @@ st.sidebar.success("Start Editing")
 with st.sidebar:
     show_auth_block()
 
-# ────────────────────────────────────────────────────────────────
 # HERO SECTION
-# ────────────────────────────────────────────────────────────────
-
 st.html(
     """
     <div style="text-align: center; padding: 2rem 0;">
@@ -25,15 +22,10 @@ st.html(
     </div>
     """
 )
-
 st.divider()
 
-# ────────────────────────────────────────────────────────────────
 # FEATURE SECTION
-# ────────────────────────────────────────────────────────────────
-
 st.markdown("### What SARAH Can Do For You")
-
 col1, col2, col3 = st.columns(3)
 with col1:
     st.markdown("#### 🛠️ Structure Analysis")
@@ -44,15 +36,10 @@ with col2:
 with col3:
     st.markdown("#### 🧑‍🤝‍🧑 Character & Theme Feedback")
     st.markdown("Deep analysis of arcs, motivation, and consistency.")
-
 st.divider()
 
-# ────────────────────────────────────────────────────────────────
 # CTA: WAITLIST SIGNUP FORM
-# ────────────────────────────────────────────────────────────────
-
 st.markdown("### 🚀 Join the Early Access List")
-
 st.markdown(
     """
     SARAH is currently in early development. 
@@ -60,7 +47,6 @@ st.markdown(
     Join the waitlist and be among the first to access her full suite of tools.
     """
 )
-
 with st.form("waitlist_form"):
     email = st.text_input("Enter your email to join the waitlist:")
     submitted = st.form_submit_button("✅ Join Waitlist")
@@ -69,13 +55,9 @@ with st.form("waitlist_form"):
             st.session_state.waitlist = []
         st.session_state.waitlist.append(email)
         st.success("You're on the list! We'll let you know when SARAH launches.")
-
 st.divider()
 
-# ────────────────────────────────────────────────────────────────
 # FOOTER / TAGLINE
-# ────────────────────────────────────────────────────────────────
-
 st.html(
     """
     <div style="text-align: center; color: #aaa; font-size: 0.9rem; margin-top: 2rem;">
