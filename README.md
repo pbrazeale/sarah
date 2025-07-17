@@ -122,13 +122,12 @@ ACONITE_CAFE_CODE=your_verification_code
 - Enhanced error handling and validation
 - Author-focused SaaS deployment
 ---
-
-## 📄 License
+## Contributing
+### 📄 License
 This project is currently proprietary to Aconite Cafe for internal author tooling. Licensing terms for external use are pending.
 
----
 
-## 💡 Credits
+### 💡 Credits
 
 Sarah is developed by Aconite Cafe, combining AI editing expertise with indie author publishing experience to create tools that empower storytellers.
 
